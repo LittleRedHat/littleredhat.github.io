@@ -79,22 +79,25 @@
 
 
 
-<meta name="description" content="Girshick, Ross, et al. “Rich feature hierarchies for accurate object detection and semantic segmentation.” Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.  Region">
+<meta name="description" content="Girshick, Ross. “Fast r-cnn.” Proceedings of the IEEE International Conference on Computer Vision. 2015.  继2014年的RCNN之后，Ross Girshick在15年推出Fast RCNN，构思精巧，流程更为紧凑，大幅提升了目标检测的速度。在Github上提供了源码。 同样使用最大规模的网">
 <meta name="keywords" content="目标检测">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Faster RCNN 详解">
-<meta property="og:url" content="http://littleredhat.github.io/2018/03/11/Faster-RCNN-详解/index.html">
+<meta property="og:title" content="Fast RCNN 详解">
+<meta property="og:url" content="http://littleredhat.github.io/2018/03/11/Fast-RCNN-详解/index.html">
 <meta property="og:site_name" content="littleredhat&#39;s blog">
-<meta property="og:description" content="Girshick, Ross, et al. “Rich feature hierarchies for accurate object detection and semantic segmentation.” Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.  Region">
+<meta property="og:description" content="Girshick, Ross. “Fast r-cnn.” Proceedings of the IEEE International Conference on Computer Vision. 2015.  继2014年的RCNN之后，Ross Girshick在15年推出Fast RCNN，构思精巧，流程更为紧凑，大幅提升了目标检测的速度。在Github上提供了源码。 同样使用最大规模的网">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://img.blog.csdn.net/20160405215259014">
-<meta property="og:image" content="http://img.blog.csdn.net/20160405212106908">
-<meta property="og:image" content="http://img.blog.csdn.net/20160405214721512">
-<meta property="og:updated_time" content="2018-03-10T16:08:39.097Z">
+<meta property="og:image" content="http://img.blog.csdn.net/20160411214438672">
+<meta property="og:image" content="http://img.blog.csdn.net/20160411113225519">
+<meta property="og:image" content="http://img.blog.csdn.net/20160411221426650">
+<meta property="og:image" content="http://img.blog.csdn.net/20160411214618571">
+<meta property="og:image" content="http://img.blog.csdn.net/20160411154103099">
+<meta property="og:image" content="http://img.blog.csdn.net/20160414104600312">
+<meta property="og:updated_time" content="2018-03-10T16:11:22.945Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Faster RCNN 详解">
-<meta name="twitter:description" content="Girshick, Ross, et al. “Rich feature hierarchies for accurate object detection and semantic segmentation.” Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.  Region">
-<meta name="twitter:image" content="http://img.blog.csdn.net/20160405215259014">
+<meta name="twitter:title" content="Fast RCNN 详解">
+<meta name="twitter:description" content="Girshick, Ross. “Fast r-cnn.” Proceedings of the IEEE International Conference on Computer Vision. 2015.  继2014年的RCNN之后，Ross Girshick在15年推出Fast RCNN，构思精巧，流程更为紧凑，大幅提升了目标检测的速度。在Github上提供了源码。 同样使用最大规模的网">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160411214438672">
 
 
 
@@ -124,13 +127,13 @@
 
 
 
-  <link rel="canonical" href="http://littleredhat.github.io/2018/03/11/Faster-RCNN-详解/"/>
+  <link rel="canonical" href="http://littleredhat.github.io/2018/03/11/Fast-RCNN-详解/"/>
 
 
 
 
 
-  <title>Faster RCNN 详解 | littleredhat's blog</title>
+  <title>Fast RCNN 详解 | littleredhat's blog</title>
   
 
 
@@ -257,7 +260,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://littleredhat.github.io/2018/03/11/Faster-RCNN-详解/">
+    <link itemprop="mainEntityOfPage" href="http://littleredhat.github.io/2018/03/11/Fast-RCNN-详解/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="littleredhat">
@@ -274,7 +277,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Faster RCNN 详解</h1>
+          <h1 class="post-title" itemprop="name headline">Fast RCNN 详解</h1>
         
 
         <div class="post-meta">
@@ -305,9 +308,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/03/11/Faster-RCNN-详解/#comments" itemprop="discussionUrl">
+                <a href="/2018/03/11/Fast-RCNN-详解/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2018/03/11/Faster-RCNN-详解/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2018/03/11/Fast-RCNN-详解/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -315,7 +318,7 @@
 
           
           
-             <span id="/2018/03/11/Faster-RCNN-详解/" class="leancloud_visitors" data-flag-title="Faster RCNN 详解">
+             <span id="/2018/03/11/Fast-RCNN-详解/" class="leancloud_visitors" data-flag-title="Fast RCNN 详解">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -347,50 +350,53 @@
 
       
         <blockquote>
-<p>Girshick, Ross, et al. “Rich feature hierarchies for accurate object detection and semantic segmentation.” Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.</p>
+<p>Girshick, Ross. “Fast r-cnn.” Proceedings of the IEEE International Conference on Computer Vision. 2015.</p>
 </blockquote>
-<p>Region CNN(RCNN)可以说是利用深度学习进行目标检测的开山之作。作者<a href="http://www.cs.berkeley.edu/~rbg/" target="_blank" rel="noopener">Ross Girshick</a>多次在PASCAL VOC的目标检测竞赛中折桂，2010年更带领团队获得终身成就奖，如今供职于Facebook旗下的FAIR。<br>这篇文章思路简洁，在DPM方法多年平台期后，效果提高显著。包括本文在内的一系列目标检测算法：RCNN, Fast RCNN, Faster RCNN代表当下目标检测的前沿水平，在github都给出了基于Caffe的源码。</p>
-<h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p>本文解决了目标检测中的两个关键问题。</p>
-<h2 id="问题一：速度"><a href="#问题一：速度" class="headerlink" title="问题一：速度"></a>问题一：速度</h2><p>经典的目标检测算法使用滑动窗法依次判断所有可能的区域。本文则预先提取一系列较可能是物体的候选区域，之后仅在这些候选区域上提取特征，进行判断。</p>
-<h2 id="问题二：训练集"><a href="#问题二：训练集" class="headerlink" title="问题二：训练集"></a>问题二：训练集</h2><p>经典的目标检测算法在区域中提取人工设定的特征（Haar，HOG）。本文则需要训练深度网络进行特征提取。可供使用的有两个数据库：<br>一个较大的识别库（ImageNet ILSVC 2012）：标定每张图片中物体的类别。一千万图像，1000类。<br>一个较小的检测库（PASCAL VOC 2007）：标定每张图片中，物体的类别和位置。一万图像，20类。<br>本文使用识别库进行预训练，而后用检测库调优参数。最后在检测库上评测。</p>
-<h1 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h1><p>RCNN算法分为4个步骤 </p>
+<p>继2014年的RCNN之后，Ross Girshick在15年推出Fast RCNN，构思精巧，流程更为紧凑，大幅提升了目标检测的速度。在Github上提供了<a href="https://github.com/rbgirshick/fast-rcnn" target="_blank" rel="noopener">源码</a>。</p>
+<p>同样使用最大规模的网络，Fast RCNN和RCNN相比，训练时间从84小时减少为9.5小时，测试时间从47秒减少为0.32秒。在PASCAL VOC 2007上的准确率相差无几，约在66%-67%之间。</p>
+<h1 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h1><h2 id="基础：RCNN"><a href="#基础：RCNN" class="headerlink" title="基础：RCNN"></a>基础：RCNN</h2><p>简单来说，RCNN使用以下四步实现目标检测：<br>a. 在图像中确定约1000-2000个候选框<br>b. 对于每个候选框内图像块，使用深度网络提取特征<br>c. 对候选框中提取出的特征，使用分类器判别是否属于一个特定类<br>d. 对于属于某一特征的候选框，用回归器进一步调整其位置<br>更多细节可以参看<a href="http://blog.csdn.net/u014544555/article/details/79376847" target="_blank" rel="noopener">这篇博客</a>。</p>
+<h2 id="改进：Fast-RCNN"><a href="#改进：Fast-RCNN" class="headerlink" title="改进：Fast RCNN"></a>改进：Fast RCNN</h2><p>Fast RCNN方法解决了RCNN方法三个问题：</p>
+<p><strong>问题一：测试时速度慢</strong><br>RCNN一张图像内候选框之间大量重叠，提取特征操作冗余。<br>本文将整张图像归一化后直接送入深度网络。在邻接时，才加入候选框信息，在末尾的少数几层处理每个候选框,相当于只对整张图提取一次特征。</p>
+<p><strong>问题二：训练时速度慢</strong><br>原因同上。<br>在训练时，本文先将一张图像送入网络，紧接着送入从这幅图像上提取出的候选区域。这些候选区域的前几层特征不需要再重复计算。</p>
+<p><strong>问题三：训练所需空间大</strong><br>RCNN中独立的分类器和回归器需要大量特征作为训练样本。<br>本文把类别判断和位置精调统一用深度网络实现，不再需要额外存储。</p>
+<p>以下按次序介绍三个问题对应的解决方法。</p>
+<h2 id="特征提取网络"><a href="#特征提取网络" class="headerlink" title="特征提取网络"></a>特征提取网络</h2><h2 id="基本结构"><a href="#基本结构" class="headerlink" title="基本结构"></a>基本结构</h2><p>图像归一化为224×224直接送入网络。</p>
+<p>前五阶段是基础的conv+relu+pooling形式，在第五阶段结尾，输入P个候选区域（图像序号×1+几何位置×4，序号用于训练）。 </p>
+<p><img src="http://img.blog.csdn.net/20160411214438672" alt="VGG16-RCNN"></p>
+<blockquote>
+<p>注：文中给出了大中小三种网络，此处示出最大的一种。三种网络基本结构相似，仅conv+relu层数有差别，或者增删了norm层。</p>
+</blockquote>
+<h2 id="roi-pool层Forward"><a href="#roi-pool层Forward" class="headerlink" title="roi_pool层Forward"></a>roi_pool层Forward</h2><p>roi_pool层将每个候选区域均匀分成M×N块，对每块进行max pooling。将特征图上大小不一的候选区域转变为大小统一的数据，送入下一层。 这一部分的思想来源于SPP。<br><img src="http://img.blog.csdn.net/20160411113225519" alt="这里写图片描述"></p>
+<h2 id="roi-pool层的训练-backward"><a href="#roi-pool层的训练-backward" class="headerlink" title="roi_pool层的训练(backward)"></a>roi_pool层的训练(backward)</h2><p>首先考虑普通max pooling层。设$x_i$为输入层的节点，$y_j$为输出层的节点。<br>$$\frac{\partial L}{\partial x_i}=\begin{cases}0&amp;\delta(i,j)=false\ \frac{\partial L}{\partial y_j} &amp;\delta(i,j)=true\end{cases}$$<br>其中判决函数$\delta(i,j)$表示i节点是否被j节点选为最大值输出。不被选中有两种可能：$x_i$不在$y_j$范围内，或者$x_i$不是最大值。</p>
+<p>对于roi max pooling，一个输入节点可能和多个输出节点相连。设$x_i$为输入层的节点，$y_{rj}$为第r个候选区域的第j个输出节点。<br><img src="http://img.blog.csdn.net/20160411221426650" alt="这里写图片描述"><br>$$\frac{\partial L}{\partial x_i}=\Sigma_{r,j}\delta(i,r,j)\frac{\partial L}{\partial y_{rj}}$$<br>判决函数$δ(i,r,j)$表示i节点是否被候选区域r的第j个节点选为最大值输出。代价对于xi的梯度等于所有相关的后一层梯度之和。</p>
+<h1 id="网络参数训练"><a href="#网络参数训练" class="headerlink" title="网络参数训练"></a>网络参数训练</h1><h2 id="参数初始化"><a href="#参数初始化" class="headerlink" title="参数初始化"></a>参数初始化</h2><p>网络除去末尾部分如下图，在ImageNet上训练1000类分类器。结果参数作为相应层的初始化参数。<br><img src="http://img.blog.csdn.net/20160411214618571" alt="这里写图片描述"><br>其余参数随机初始化。</p>
+<h2 id="分层数据"><a href="#分层数据" class="headerlink" title="分层数据"></a>分层数据</h2><p>在调优训练时，每一个mini-batch中首先加入N张完整图片，而后加入从N张图片中选取的R个候选框。这R个候选框可以复用N张图片前5个阶段的网络特征。<br>实际选择N=2， R=128。</p>
+<h2 id="训练数据构成"><a href="#训练数据构成" class="headerlink" title="训练数据构成"></a>训练数据构成</h2><p>N张完整图片以50%概率水平翻转。<br>R个候选框的构成方式如下：<br>| 类别 | 比例 | 方式 |<br>| ————-: |————-:| ———:|<br>| 正样本 | 25% | 与某个真值重叠在[0.5,1]的候选框 |<br>| 负样本 | 75% | 与真值重叠的最大值在[0.1,0.5)的候选框 | </p>
+<h1 id="分类与位置调整"><a href="#分类与位置调整" class="headerlink" title="分类与位置调整"></a>分类与位置调整</h1><h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>第五阶段的特征输入到两个并行的全连层中（称为multi-task）。<br><img src="http://img.blog.csdn.net/20160411154103099" alt="这里写图片描述"><br><strong>cls_score</strong>层用于分类，输出K+1维数组p，表示属于K类和背景的概率。<br><strong>bbox_prdict</strong>层用于调整候选区域位置，输出4*K维数组t，表示分别属于K类时，应该平移缩放的参数。</p>
+<h2 id="代价函数"><a href="#代价函数" class="headerlink" title="代价函数"></a>代价函数</h2><p><strong>loss_cls</strong>层评估分类代价。由真实分类<strong>u</strong>对应的概率决定：<br>$$L_{cls}=-\log p_u$$</p>
+<p><strong>loss_bbox</strong>评估检测框定位代价。比较真实分类对应的预测参数$t^u$和真实平移缩放参数为v的差别：<br>$$L_{loc}=\Sigma_{i=1}^4 g(t^u_i-v_i)$$</p>
+<p>g为Smooth L1误差，对outlier不敏感：<br>$$g(x)=\begin{cases}0.5x^2&amp; |x|&lt;1\|x|-0.5&amp;otherwise \end{cases}$$<br>总代价为两者加权和，如果分类为背景则不考虑定位代价： </p>
+<p>$$L=\begin{cases}L_{cls}+\lambda L_{loc}&amp; u为前景\ L_{cls} &amp;u为背景\end{cases}$$</p>
+<blockquote>
+<p>源码中bbox_loss_weights用于标记每一个bbox是否属于某一个类</p>
+</blockquote>
+<h2 id="全连接层提速"><a href="#全连接层提速" class="headerlink" title="全连接层提速"></a>全连接层提速</h2><p>分类和位置调整都是通过全连接层(fc)实现的，设前一级数据为x后一级为y，全连接层参数为W，尺寸u×v。一次前向传播(forward)即为：<br>$$y=Wx$$</p>
+<p>计算复杂度为u×v<br>将W进行SVD分解，并用前t个特征值近似：<br>$$W=U\Sigma V^T\approx U(:,1:t) \cdot \Sigma(1:t,1:t) \cdot V(:,1:t)^T $$</p>
+<p>原来的前向传播分解成两步：<br>$$y=Wx = U\cdot (\Sigma \cdot V^T) \cdot x = U \cdot z$$</p>
+<p>计算复杂度变为u×t+v×t。<br>在实现时，相当于把一个全连接层拆分成两个，中间以一个低维数据相连。<br><img src="http://img.blog.csdn.net/20160414104600312" alt="这里写图片描述"></p>
+<blockquote>
+<p>这部分源码中没有实现</p>
+</blockquote>
+<h2 id="实验与结论"><a href="#实验与结论" class="headerlink" title="实验与结论"></a>实验与结论</h2><p>实验过程不再详述，只记录结论 </p>
 <ul>
-<li>一张图像生成1K~2K个候选区域 </li>
-<li>对每个候选区域，使用深度网络提取特征 </li>
-<li>特征送入每一类的SVM 分类器，判别是否属于该类 </li>
-<li>使用回归器精细修正候选框位置<br><img src="http://img.blog.csdn.net/20160405215259014" alt="这里写图片描述"></li>
+<li>网络末端同步训练的分类和位置调整，提升准确度 </li>
+<li>使用多尺度的图像金字塔，性能几乎没有提高 </li>
+<li>倍增训练数据，能够有2%-3%的准确度提升 </li>
+<li>网络直接输出各类概率(softmax)，比SVM分类器性能略好 </li>
+<li>更多候选窗不能提升性能</li>
 </ul>
-<h1 id="候选区域生成"><a href="#候选区域生成" class="headerlink" title="候选区域生成"></a>候选区域生成</h1><p>使用了Selective Search1方法从一张图像生成约2000-3000个候选区域。基本思路如下： </p>
-<ul>
-<li>使用一种过分割手段，将图像分割成小区域 </li>
-<li>查看现有小区域，合并可能性最高的两个区域。重复直到整张图像合并成一个区域位置 </li>
-<li>输出所有曾经存在过的区域，所谓候选区域</li>
-</ul>
-<p>候选区域生成和后续步骤相对独立，实际可以使用任意算法进行。</p>
-<h2 id="合并规则"><a href="#合并规则" class="headerlink" title="合并规则"></a>合并规则</h2><p>优先合并以下四种区域： </p>
-<ul>
-<li>颜色（颜色直方图）相近的 </li>
-<li>纹理（梯度直方图）相近的 </li>
-<li>合并后总面积小的 </li>
-<li>合并后，总面积在其BBOX中所占比例大的</li>
-</ul>
-<p>第三条，保证合并操作的尺度较为均匀，避免一个大区域陆续“吃掉”其他小区域。</p>
-<p>例：设有区域a-b-c-d-e-f-g-h。较好的合并方式是：ab-cd-ef-gh -&gt; abcd-efgh -&gt; abcdefgh。<br>不好的合并方法是：ab-c-d-e-f-g-h -&gt;abcd-e-f-g-h -&gt;abcdef-gh -&gt; abcdefgh。</p>
-<p>第四条，保证合并后形状规则。</p>
-<p>例：左图适于合并，右图不适于合并。<br><img src="http://img.blog.csdn.net/20160405212106908" alt="这里写图片描述"></p>
-<p>上述四条规则只涉及区域的颜色直方图、纹理直方图、面积和位置。合并后的区域特征可以直接由子区域特征计算而来，速度较快。</p>
-<h2 id="多样化与后处理"><a href="#多样化与后处理" class="headerlink" title="多样化与后处理"></a>多样化与后处理</h2><p>为尽可能不遗漏候选区域，上述操作在多个颜色空间中同时进行（RGB,HSV,Lab等）。在一个颜色空间中，使用上述四条规则的不同组合进行合并。所有颜色空间与所有规则的全部结果，在去除重复后，都作为候选区域输出。</p>
-<p>作者提供了Selective Search的源码，内含较多.p文件和.mex文件，难以细查具体实现。</p>
-<h1 id="特征提取"><a href="#特征提取" class="headerlink" title="特征提取"></a>特征提取</h1><h2 id="预处理"><a href="#预处理" class="headerlink" title="预处理"></a>预处理</h2><p>使用深度网络提取特征之前，首先把候选区域归一化成同一尺寸227×227。<br>此处有一些细节可做变化：外扩的尺寸大小，形变时是否保持原比例，对框外区域直接截取还是补灰。会轻微影响性能。</p>
-<h2 id="预训练"><a href="#预训练" class="headerlink" title="预训练"></a>预训练</h2><p><strong>网络结构</strong><br>基本借鉴Hinton 2012年在Image Net上的分类网络2，略作简化3。<br><img src="http://img.blog.csdn.net/20160405214721512" alt="这里写图片描述"><br>此网络提取的特征为4096维，之后送入一个4096-&gt;1000的全连接(fc)层进行分类。<br>学习率0.01。</p>
-<p><strong>训练数据</strong><br>使用ILVCR 2012的全部数据进行训练，输入一张图片，输出1000维的类别标号。</p>
-<h2 id="调优训练"><a href="#调优训练" class="headerlink" title="调优训练"></a>调优训练</h2><p><strong>网络结构</strong><br>同样使用上述网络，最后一层换成4096-&gt;21的全连接网络。<br>学习率0.001，每一个batch包含32个正样本（属于20类）和96个背景。</p>
-<p><strong>训练数据</strong><br>使用PASCAL VOC 2007的训练集，输入一张图片，输出21维的类别标号，表示20类+背景。<br>考察一个候选框和当前图像上所有标定框重叠面积最大的一个。如果重叠比例大于0.5，则认为此候选框为此标定的类别；否则认为此候选框为背景。</p>
-<h2 id="类别判断"><a href="#类别判断" class="headerlink" title="类别判断"></a>类别判断</h2><p><strong>分类器</strong><br>对每一类目标，使用一个线性SVM二类分类器进行判别。输入为深度网络输出的4096维特征，输出是否属于此类。<br>由于负样本很多，使用hard negative mining方法。<br><strong>正样本</strong><br>本类的真值标定框。<br><strong>负样本</strong><br>考察每一个候选框，如果和本类所有标定框的重叠都小于0.3，认定其为负样本</p>
-<h2 id="位置精修"><a href="#位置精修" class="headerlink" title="位置精修"></a>位置精修</h2><p>目标检测问题的衡量标准是重叠面积：许多看似准确的检测结果，往往因为候选框不够准确，重叠面积很小。故需要一个位置精修步骤。<br><strong>回归器</strong><br>对每一类目标，使用一个线性脊回归器进行精修。正则项λ=10000。<br>输入为深度网络pool5层的4096维特征，输出为xy方向的缩放和平移。<br><strong>训练样本</strong><br>判定为本类的候选框中，和真值重叠面积大于0.6的候选框。</p>
-<h1 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h1><p>论文发表的2014年，DPM已经进入瓶颈期，即使使用复杂的特征和结构得到的提升也十分有限。本文将深度学习引入检测领域，一举将PASCAL VOC上的检测率从35.1%提升到53.7%。<br>本文的前两个步骤（候选区域提取+特征提取）与待检测类别无关，可以在不同类之间共用。这两步在GPU上约需13秒。<br>同时检测多类时，需要倍增的只有后两步骤（判别+精修），都是简单的线性运算，速度很快。这两步对于100K类别只需10秒。</p>
-<p>以本论文为基础，后续的Fast RCNN和Faster RCNN在速度上有突飞猛进的发展，基本解决了PASCAL VOC上的目标检测问题。</p>
-<p>转载来源：<a href="http://blog.csdn.net/shenxiaolu1984/article/details/51066975" target="_blank" rel="noopener">http://blog.csdn.net/shenxiaolu1984/article/details/51066975</a></p>
+<p>同年作者团队又推出了Faster RCNN，进一步把检测速度提高到准实时，可以参看<a href="http://blog.csdn.net/u014544555/article/details/79381342" target="_blank" rel="noopener">这篇博客</a>。<br>关于RCNN, Fast RCNN, Faster RCNN这一系列目标检测算法，可以进一步参考作者在15年ICCV上的讲座<a href="http://mp7.watson.ibm.com/ICCV2015/slides/iccv15_tutorial_training_rbg.pdf" target="_blank" rel="noopener">Training R-CNNs of various velocities</a>。</p>
+<p>转载来源：<a href="http://blog.csdn.net/shenxiaolu1984/article/details/51036677" target="_blank" rel="noopener">http://blog.csdn.net/shenxiaolu1984/article/details/51036677</a></p>
 
       
     </div>
@@ -566,7 +572,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#思想"><span class="nav-number">1.</span> <span class="nav-text">思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题一：速度"><span class="nav-number">2.</span> <span class="nav-text">问题一：速度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题二：训练集"><span class="nav-number">3.</span> <span class="nav-text">问题二：训练集</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#流程"><span class="nav-number"></span> <span class="nav-text">流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#候选区域生成"><span class="nav-number"></span> <span class="nav-text">候选区域生成</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#合并规则"><span class="nav-number">1.</span> <span class="nav-text">合并规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多样化与后处理"><span class="nav-number">2.</span> <span class="nav-text">多样化与后处理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#特征提取"><span class="nav-number"></span> <span class="nav-text">特征提取</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#预处理"><span class="nav-number">1.</span> <span class="nav-text">预处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#预训练"><span class="nav-number">2.</span> <span class="nav-text">预训练</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调优训练"><span class="nav-number">3.</span> <span class="nav-text">调优训练</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类别判断"><span class="nav-number">4.</span> <span class="nav-text">类别判断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#位置精修"><span class="nav-number">5.</span> <span class="nav-text">位置精修</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结果"><span class="nav-number"></span> <span class="nav-text">结果</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#思想"><span class="nav-number">1.</span> <span class="nav-text">思想</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基础：RCNN"><span class="nav-number">1.1.</span> <span class="nav-text">基础：RCNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#改进：Fast-RCNN"><span class="nav-number">1.2.</span> <span class="nav-text">改进：Fast RCNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特征提取网络"><span class="nav-number">1.3.</span> <span class="nav-text">特征提取网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本结构"><span class="nav-number">1.4.</span> <span class="nav-text">基本结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#roi-pool层Forward"><span class="nav-number">1.5.</span> <span class="nav-text">roi_pool层Forward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#roi-pool层的训练-backward"><span class="nav-number">1.6.</span> <span class="nav-text">roi_pool层的训练(backward)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#网络参数训练"><span class="nav-number">2.</span> <span class="nav-text">网络参数训练</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参数初始化"><span class="nav-number">2.1.</span> <span class="nav-text">参数初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分层数据"><span class="nav-number">2.2.</span> <span class="nav-text">分层数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练数据构成"><span class="nav-number">2.3.</span> <span class="nav-text">训练数据构成</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分类与位置调整"><span class="nav-number">3.</span> <span class="nav-text">分类与位置调整</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据结构"><span class="nav-number">3.1.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代价函数"><span class="nav-number">3.2.</span> <span class="nav-text">代价函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#全连接层提速"><span class="nav-number">3.3.</span> <span class="nav-text">全连接层提速</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验与结论"><span class="nav-number">3.4.</span> <span class="nav-text">实验与结论</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -743,9 +749,9 @@
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'http://littleredhat.github.io/2018/03/11/Faster-RCNN-详解/';
-          this.page.identifier = '2018/03/11/Faster-RCNN-详解/';
-          this.page.title = 'Faster RCNN 详解';
+          this.page.url = 'http://littleredhat.github.io/2018/03/11/Fast-RCNN-详解/';
+          this.page.identifier = '2018/03/11/Fast-RCNN-详解/';
+          this.page.title = 'Fast RCNN 详解';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://littleredhat-github-io.disqus.com/embed.js';
