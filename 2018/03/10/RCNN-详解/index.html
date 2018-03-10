@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next muse use-motion" lang="zh-Hans">
+<html class="theme-next gemini use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="目标检测," />
 
 
 
@@ -80,6 +80,7 @@
 
 
 <meta name="description" content="Girshick, Ross, et al. “Rich feature hierarchies for accurate object detection and semantic segmentation.” Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.  Region">
+<meta name="keywords" content="目标检测">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RCNN 详解">
 <meta property="og:url" content="http://littleredhat.github.io/2018/03/10/RCNN-详解/index.html">
@@ -89,7 +90,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20160405215259014">
 <meta property="og:image" content="http://img.blog.csdn.net/20160405212106908">
 <meta property="og:image" content="http://img.blog.csdn.net/20160405214721512">
-<meta property="og:updated_time" content="2018-03-10T13:51:47.719Z">
+<meta property="og:updated_time" content="2018-03-10T15:00:48.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RCNN 详解">
 <meta name="twitter:description" content="Girshick, Ross, et al. “Rich feature hierarchies for accurate object detection and semantic segmentation.” Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.  Region">
@@ -101,7 +102,7 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Muse',
+    scheme: 'Gemini',
     version: '5.1.4',
     sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
     fancybox: true,
@@ -194,6 +195,26 @@
         </li>
       
         
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
             
@@ -279,6 +300,17 @@
 
           
             
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/03/10/RCNN-详解/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2018/03/10/RCNN-详解/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
           
 
           
@@ -306,7 +338,7 @@
         <blockquote>
 <p>Girshick, Ross, et al. “Rich feature hierarchies for accurate object detection and semantic segmentation.” Proceedings of the IEEE conference on computer vision and pattern recognition. 2014.</p>
 </blockquote>
-<p>Region CNN(RCNN)可以说是利用深度学习进行目标检测的开山之作。作者<a href="http://www.cs.berkeley.edu/~rbg/" target="_blank" rel="noopener">Ross Girshick</a>多次在PASCAL VOC的目标检测竞赛中折桂，2010年更带领团队获得终身成就奖，如今供职于Facebook旗下的FAIR。<br>这篇文章思路简洁，在DPM方法多年平台期后，效果提高显著。包括本文在内的一系列目标检测算法：RCNN, Fast RCNN, Faster RCNN代表当下目标检测的前沿水平，在github都给出了基于Caffe的源码。</p>
+<p>Region CNN(RCNN)可以说是利用深度学习进行目标检测的开山之作。作者<a href="http://www.cs.berkeley.edu/~rbg/" target="_blank" rel="noopener">Ross Girshick</a>多次在PASCAL VOC的目标检测竞赛中折桂，2010年更带领团队获得终身成就奖，如今供职于Facebook旗下的FAIR。<br>这篇文章思路简洁，在DPM方法多年平台期后，效果提高显著。包括本文在内的一系列目标检测算法：RCNN, Fast RCNN, Faster RCNN代表当下目标检测的前沿水平，在github都给出了基于Caffe的源码。<br><a id="more"></a></p>
 <h1 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h1><p>本文解决了目标检测中的两个关键问题。</p>
 <h2 id="问题一：速度"><a href="#问题一：速度" class="headerlink" title="问题一：速度"></a>问题一：速度</h2><p>经典的目标检测算法使用滑动窗法依次判断所有可能的区域。本文则预先提取一系列较可能是物体的候选区域，之后仅在这些候选区域上提取特征，进行判断。</p>
 <h2 id="问题二：训练集"><a href="#问题二：训练集" class="headerlink" title="问题二：训练集"></a>问题二：训练集</h2><p>经典的目标检测算法在区域中提取人工设定的特征（Haar，HOG）。本文则需要训练深度网络进行特征提取。可供使用的有两个数据库：<br>一个较大的识别库（ImageNet ILSVC 2012）：标定每张图片中物体的类别。一千万图像，1000类。<br>一个较小的检测库（PASCAL VOC 2007）：标定每张图片中，物体的类别和位置。一万图像，20类。<br>本文使用识别库进行预训练，而后用检测库调优参数。最后在检测库上评测。</p>
@@ -362,6 +394,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/目标检测/" rel="tag"># 目标检测</a>
+          
+        </div>
+      
 
       
       
@@ -409,6 +447,16 @@
           
 
   
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
 
 
 
@@ -446,7 +494,7 @@
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
               <p class="site-author-name" itemprop="name">littleredhat</p>
-              <p class="site-description motion-element" itemprop="description">深度学习</p>
+              <p class="site-description motion-element" itemprop="description">关注深度菜鸡人人有责</p>
           </div>
 
           <nav class="site-state motion-element">
@@ -464,6 +512,15 @@
 
             
 
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
             
 
           </nav>
@@ -531,7 +588,7 @@
 
 
 
-  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
 
 
 
@@ -578,6 +635,8 @@
   
 
 
+  
+
 
 
 
@@ -618,6 +677,11 @@
     <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
   
 
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
 
   
 
@@ -630,6 +694,13 @@
 
   
   
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
 
   
   <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
@@ -649,6 +720,26 @@
 
   
 
+    
+      <script id="dsq-count-scr" src="https://littleredhat-github-io.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://littleredhat.github.io/2018/03/10/RCNN-详解/';
+          this.page.identifier = '2018/03/10/RCNN-详解/';
+          this.page.title = 'RCNN 详解';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://littleredhat-github-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
 
 
 
@@ -664,10 +755,6 @@
 
 
 
-  
-
-
-
 
 
 
@@ -693,6 +780,28 @@
   
 
   
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
 
   
 
