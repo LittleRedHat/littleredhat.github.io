@@ -93,7 +93,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20160411214618571">
 <meta property="og:image" content="http://img.blog.csdn.net/20160411154103099">
 <meta property="og:image" content="http://img.blog.csdn.net/20160414104600312">
-<meta property="og:updated_time" content="2018-03-10T16:11:22.945Z">
+<meta property="og:updated_time" content="2018-03-10T16:13:08.196Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Fast RCNN 详解">
 <meta name="twitter:description" content="Girshick, Ross. “Fast r-cnn.” Proceedings of the IEEE International Conference on Computer Vision. 2015.  继2014年的RCNN之后，Ross Girshick在15年推出Fast RCNN，构思精巧，流程更为紧凑，大幅提升了目标检测的速度。在Github上提供了源码。 同样使用最大规模的网">
@@ -353,7 +353,7 @@
 <p>Girshick, Ross. “Fast r-cnn.” Proceedings of the IEEE International Conference on Computer Vision. 2015.</p>
 </blockquote>
 <p>继2014年的RCNN之后，Ross Girshick在15年推出Fast RCNN，构思精巧，流程更为紧凑，大幅提升了目标检测的速度。在Github上提供了<a href="https://github.com/rbgirshick/fast-rcnn" target="_blank" rel="noopener">源码</a>。</p>
-<p>同样使用最大规模的网络，Fast RCNN和RCNN相比，训练时间从84小时减少为9.5小时，测试时间从47秒减少为0.32秒。在PASCAL VOC 2007上的准确率相差无几，约在66%-67%之间。</p>
+<p>同样使用最大规模的网络，Fast RCNN和RCNN相比，训练时间从84小时减少为9.5小时，测试时间从47秒减少为0.32秒。在PASCAL VOC 2007上的准确率相差无几，约在66%-67%之间。<br><a id="more"></a></p>
 <h1 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h1><h2 id="基础：RCNN"><a href="#基础：RCNN" class="headerlink" title="基础：RCNN"></a>基础：RCNN</h2><p>简单来说，RCNN使用以下四步实现目标检测：<br>a. 在图像中确定约1000-2000个候选框<br>b. 对于每个候选框内图像块，使用深度网络提取特征<br>c. 对候选框中提取出的特征，使用分类器判别是否属于一个特定类<br>d. 对于属于某一特征的候选框，用回归器进一步调整其位置<br>更多细节可以参看<a href="http://blog.csdn.net/u014544555/article/details/79376847" target="_blank" rel="noopener">这篇博客</a>。</p>
 <h2 id="改进：Fast-RCNN"><a href="#改进：Fast-RCNN" class="headerlink" title="改进：Fast RCNN"></a>改进：Fast RCNN</h2><p>Fast RCNN方法解决了RCNN方法三个问题：</p>
 <p><strong>问题一：测试时速度慢</strong><br>RCNN一张图像内候选框之间大量重叠，提取特征操作冗余。<br>本文将整张图像归一化后直接送入深度网络。在邻接时，才加入候选框信息，在末尾的少数几层处理每个候选框,相当于只对整张图提取一次特征。</p>
