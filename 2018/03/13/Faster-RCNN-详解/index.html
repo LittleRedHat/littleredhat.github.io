@@ -94,7 +94,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20160415134137682">
 <meta property="og:image" content="http://img.blog.csdn.net/20160415150343559">
 <meta property="og:image" content="http://img.blog.csdn.net/20160415151012671">
-<meta property="og:updated_time" content="2018-03-13T08:05:33.474Z">
+<meta property="og:updated_time" content="2018-03-13T08:08:00.232Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Faster-RCNN-详解">
 <meta name="twitter:description" content="Ren, Shaoqing, et al. “Faster R-CNN: Towards real-time object detection with region proposal networks.” Advances in Neural Information Processing Systems. 2015.  本文是继RCNN[1]，fast RCNN[2]之后，目标检测界的领军人物">
@@ -387,7 +387,7 @@
         <blockquote>
 <p>Ren, Shaoqing, et al. “Faster R-CNN: Towards real-time object detection with region proposal networks.” Advances in Neural Information Processing Systems. 2015.</p>
 </blockquote>
-<p>本文是继RCNN[1]，fast RCNN[2]之后，目标检测界的领军人物Ross Girshick团队在2015年的又一力作。简单网络目标检测速度达到17fps，在PASCAL VOC上准确率为59.9%；复杂网络达到5fps，准确率78.8%。作者在github上给出了基于<a href="https://github.com/ShaoqingRen/faster_rcnn" target="_blank" rel="noopener">matlab</a>和<a href="https://github.com/rbgirshick/py-faster-rcnn" target="_blank" rel="noopener">python</a>的源码。</p>
+<p>本文是继RCNN[1]，fast RCNN[2]之后，目标检测界的领军人物Ross Girshick团队在2015年的又一力作。简单网络目标检测速度达到17fps，在PASCAL VOC上准确率为59.9%；复杂网络达到5fps，准确率78.8%。作者在github上给出了基于<a href="https://github.com/ShaoqingRen/faster_rcnn" target="_blank" rel="noopener">matlab</a>和<a href="https://github.com/rbgirshick/py-faster-rcnn" target="_blank" rel="noopener">python</a>的源码。<br><a id="more"></a></p>
 <h1 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h1><p>从RCNN到Fast RCNN，再到本文的Faster RCNN,可以看出目标检测基本都是按照4个步骤在走（候选区域生成，特征提取，分类，位置精修），RCNN解决的是将这四个步骤联合起来；Fast RCNN将特征提取，分类以及位置精修合并在了同一个网络中，通过类似SPPNet的ROI pooling层共享同一张图中不同Region Proposal之间的特征，极大的加快了检测速度，但是Fast RCNN中候选区域生成还是单独的，使用的还是Selective Search算法，Faster RCNN将这四个步骤统一到了一起，通过一个RPN网络来生成Region Proposal。</p>
 <p><img src="http://img.blog.csdn.net/20160414164536029" alt=""><br>本篇论文着重解决了这个系统中的三个问题： </p>
 <ol>
