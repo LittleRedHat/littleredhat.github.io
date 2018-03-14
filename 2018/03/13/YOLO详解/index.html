@@ -92,7 +92,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20170521225148353?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxNDM4MDE2NQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
 <meta property="og:image" content="http://img.blog.csdn.net/20180313233857371?watermark/2/text/Ly9ibG9nLmNzZG4ubmV0L3UwMTQ1NDQ1NTU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 <meta property="og:image" content="http://img.blog.csdn.net/20180314000443343?watermark/2/text/Ly9ibG9nLmNzZG4ubmV0L3UwMTQ1NDQ1NTU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
-<meta property="og:updated_time" content="2018-03-14T03:00:24.792Z">
+<meta property="og:updated_time" content="2018-03-14T03:01:49.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="YOLO详解">
 <meta name="twitter:description" content="Redmon, J., Divvala, S., Girshick, R., Farhadi, A.: You only look once: Unified, real-time object detection. In: CVPR. (2016)  思想YOLO将物体检测作为回归问题求解，用卷积神经网络直接从输入图像预测BBox和类别的概率，没有单独的求取region proposal的过程">
@@ -391,7 +391,7 @@
 <p>若BBox包含物体，则$P(object) = 1$；否则$P(object) = 0$。IOU为预测bounding box与物体真实区域的交集面积（以像素为单位，用真实区域的像素面积归一化到[0,1]区间）。每个BBox的confidence乘以该BBox所在的格子的类别预测值就是该BBox的类别预测值。</p>
 <h2 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h2><p>YOLO使用均方和误差作为loss函数来优化模型参数，即网络输出的S<em>S</em>(B<em>5 + C)维向量与真实图像的对应S</em>S<em>(B</em>5 + C)维向量的均方和误差。<br><img src="//img.blog.csdn.net/20180314000443343?watermark/2/text/Ly9ibG9nLmNzZG4ubmV0L3UwMTQ1NDQ1NTU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"><br>其中，$x,y,w,C,p$为网络预测值，$\hat{x},\hat{y},\hat{w},\hat{C},\hat{p}$为标注值。$\mathbb 1_{i}^{obj} $表示物体落入格子$i$中，$\mathbb 1_{ij}^{obj}$和$\mathbb 1_{ij}^{noobj}$分别表示物体落入与未落入格子$i$的第$j$个BBox内。</p>
 <blockquote>
-<p>[1] 用宽和高的开根号代替原来的宽和高，这样做主要是因为相同的宽和高误差对于小的目标精度影响比大的目标要大。<br>[2] 使用$\lambda <em>{coord} =5$平衡定位与分类误差。<br>[3] 在计算IOU误差时，包含物体的格子与不包含物体的格子，二者的IOU误差对网络loss的贡献值是不同的。若采用相同的权值，那么不包含物体的格子的confidence值近似为0，变相放大了包含物体的格子的confidence误差在计算网络参数梯度时的影响，用$\lambda</em>{noobj}=0.5$修正</p>
+<p>[1] 用宽和高的开根号代替原来的宽和高，这样做主要是因为相同的宽和高误差对于小的目标精度影响比大的目标要大。<br>[2] 使用$\lambda_{coord}=5$平衡定位与分类误差。<br>[3] 在计算IOU误差时，包含物体的格子与不包含物体的格子，二者的IOU误差对网络loss的贡献值是不同的。若采用相同的权值，那么不包含物体的格子的confidence值近似为0，变相放大了包含物体的格子的confidence误差在计算网络参数梯度时的影响，用$\lambda_{noobj}=0.5$修正</p>
 </blockquote>
 <p>那么具体实现的时候是什么样的过程呢？</p>
 <h3 id="训练时"><a href="#训练时" class="headerlink" title="训练时"></a>训练时</h3><p>输入N个图像，每个图像包含M个object，每个object包含4个坐标（x，y，w，h）和1个label。然后通过网络得到7<em>7</em>30大小的三维矩阵。每个1*30的向量前5个元素表示第一个bounding box的4个坐标和1个confidence，第6到10元素表示第二个bounding box的4个坐标和1个confidence。最后20个表示这个cell所属类别。注意这30个都是预测的结果。然后就可以计算损失函数的第一、二 、五行。至于第三四行，confidence可以根据ground truth和预测的BBox计算出的IOU和是否有object的0,1值相乘得到。真实的confidence是0或1值，即有object则为1，没有object则为0。 这样就能计算出loss function的值了。</p>
