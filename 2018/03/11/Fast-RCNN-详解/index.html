@@ -93,7 +93,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20160411214618571">
 <meta property="og:image" content="http://img.blog.csdn.net/20160411154103099">
 <meta property="og:image" content="http://img.blog.csdn.net/20160414104600312">
-<meta property="og:updated_time" content="2018-03-16T07:00:12.286Z">
+<meta property="og:updated_time" content="2018-03-16T07:02:26.419Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Fast RCNN 详解">
 <meta name="twitter:description" content="Girshick, Ross. “Fast r-cnn.” Proceedings of the IEEE International Conference on Computer Vision. 2015.  继2014年的RCNN之后，Ross Girshick在15年推出Fast RCNN，构思精巧，流程更为紧凑，大幅提升了目标检测的速度。在Github上提供了源码。 同样使用最大规模的网">
@@ -401,7 +401,7 @@
 <p>注：文中给出了大中小三种网络，此处示出最大的一种。三种网络基本结构相似，仅conv+relu层数有差别，或者增删了norm层。</p>
 </blockquote>
 <h2 id="roi-pool层Forward"><a href="#roi-pool层Forward" class="headerlink" title="roi_pool层Forward"></a>roi_pool层Forward</h2><p>roi_pool层将每个候选区域均匀分成M×N块，对每块进行max pooling。将特征图上大小不一的候选区域转变为大小统一的数据，送入下一层。 这一部分的思想来源于SPP。<br><img src="http://img.blog.csdn.net/20160411113225519" alt="这里写图片描述"></p>
-<h2 id="roi-pool层的训练-backward"><a href="#roi-pool层的训练-backward" class="headerlink" title="roi_pool层的训练(backward)"></a>roi_pool层的训练(backward)</h2><p>首先考虑普通max pooling层。设$x_i$为输入层的节点，$y_j$为输出层的节点。<br>$$\frac{\partial L}{\partial x_i}=\begin{cases}0&amp;\delta(i,j)=false\ \frac{\partial L}{\partial y_j} &amp;\delta(i,j)=true\end{cases}$$<br>其中判决函数$\delta(i,j)$表示i节点是否被j节点选为最大值输出。不被选中有两种可能：$x_i$不在$y_j$范围内，或者$x_i$不是最大值。</p>
+<h2 id="roi-pool层的训练-backward"><a href="#roi-pool层的训练-backward" class="headerlink" title="roi_pool层的训练(backward)"></a>roi_pool层的训练(backward)</h2><p>首先考虑普通max pooling层。设$x_i$为输入层的节点，$y_j$为输出层的节点。<br>$$\frac{\partial L}{\partial x_i}=\begin{cases}0&amp;\delta(i,j)=false \newline \frac{\partial L}{\partial y_j} &amp;\delta(i,j)=true\end{cases}$$<br>其中判决函数$\delta(i,j)$表示i节点是否被j节点选为最大值输出。不被选中有两种可能：$x_i$不在$y_j$范围内，或者$x_i$不是最大值。</p>
 <p>对于roi max pooling，一个输入节点可能和多个输出节点相连。设$x_i$为输入层的节点，$y_{rj}$为第r个候选区域的第j个输出节点。<br><img src="http://img.blog.csdn.net/20160411221426650" alt="这里写图片描述"><br>$$\frac{\partial L}{\partial x_i}=\Sigma_{r,j}\delta(i,r,j)\frac{\partial L}{\partial y_{rj}}$$<br>判决函数$δ(i,r,j)$表示i节点是否被候选区域r的第j个节点选为最大值输出。代价对于xi的梯度等于所有相关的后一层梯度之和。</p>
 <h1 id="网络参数训练"><a href="#网络参数训练" class="headerlink" title="网络参数训练"></a>网络参数训练</h1><h2 id="参数初始化"><a href="#参数初始化" class="headerlink" title="参数初始化"></a>参数初始化</h2><p>网络除去末尾部分如下图，在ImageNet上训练1000类分类器。结果参数作为相应层的初始化参数。<br><img src="http://img.blog.csdn.net/20160411214618571" alt="这里写图片描述"><br>其余参数随机初始化。</p>
 <h2 id="分层数据"><a href="#分层数据" class="headerlink" title="分层数据"></a>分层数据</h2><p>在调优训练时，每一个mini-batch中首先加入N张完整图片，而后加入从N张图片中选取的R个候选框。这R个候选框可以复用N张图片前5个阶段的网络特征。<br>实际选择N=2， R=128。</p>
@@ -427,29 +427,11 @@
 </tr>
 </tbody>
 </table>
-<table>
-<thead>
-<tr>
-<th>name</th>
-<th>age</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>LearnShare</td>
-<td>12</td>
-</tr>
-<tr>
-<td>Mike</td>
-<td>32</td>
-</tr>
-</tbody>
-</table>
 <h1 id="分类与位置调整"><a href="#分类与位置调整" class="headerlink" title="分类与位置调整"></a>分类与位置调整</h1><h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>第五阶段的特征输入到两个并行的全连层中（称为multi-task）。<br><img src="http://img.blog.csdn.net/20160411154103099" alt="这里写图片描述"><br><strong>cls_score</strong>层用于分类，输出K+1维数组p，表示属于K类和背景的概率。<br><strong>bbox_prdict</strong>层用于调整候选区域位置，输出4*K维数组t，表示分别属于K类时，应该平移缩放的参数。</p>
 <h2 id="代价函数"><a href="#代价函数" class="headerlink" title="代价函数"></a>代价函数</h2><p><strong>loss_cls</strong>层评估分类代价。由真实分类<strong>u</strong>对应的概率决定：<br>$$L_{cls}=-\log p_u$$</p>
 <p><strong>loss_bbox</strong>评估检测框定位代价。比较真实分类对应的预测参数$t^u$和真实平移缩放参数为v的差别：<br>$$L_{loc}=\Sigma_{i=1}^4 g(t^u_i-v_i)$$</p>
-<p>g为Smooth L1误差，对outlier不敏感：<br>$$g(x)=\begin{cases}0.5x^2&amp; |x|&lt;1 \<br>|x|-0.5&amp;otherwise \end{cases}$$<br>总代价为两者加权和，如果分类为背景则不考虑定位代价： </p>
-<p>$$L=\begin{cases}L_{cls}+\lambda L_{loc}&amp; u为前景\ L_{cls} &amp;u为背景\end{cases}$$</p>
+<p>g为Smooth L1误差，对outlier不敏感：<br>$$g(x)=\begin{cases}0.5x^2&amp; |x|&lt;1 \newline<br>|x|-0.5&amp;otherwise \end{cases}$$<br>总代价为两者加权和，如果分类为背景则不考虑定位代价： </p>
+<p>$$L=\begin{cases}L_{cls}+\lambda L_{loc}&amp; u为前景 \newline L_{cls} &amp;u为背景\end{cases}$$</p>
 <blockquote>
 <p>源码中bbox_loss_weights用于标记每一个bbox是否属于某一个类</p>
 </blockquote>
