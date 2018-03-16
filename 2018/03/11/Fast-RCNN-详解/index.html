@@ -93,7 +93,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20160411214618571">
 <meta property="og:image" content="http://img.blog.csdn.net/20160411154103099">
 <meta property="og:image" content="http://img.blog.csdn.net/20160414104600312">
-<meta property="og:updated_time" content="2018-03-16T06:53:42.720Z">
+<meta property="og:updated_time" content="2018-03-16T06:57:42.240Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Fast RCNN 详解">
 <meta name="twitter:description" content="Girshick, Ross. “Fast r-cnn.” Proceedings of the IEEE International Conference on Computer Vision. 2015.  继2014年的RCNN之后，Ross Girshick在15年推出Fast RCNN，构思精巧，流程更为紧凑，大幅提升了目标检测的速度。在Github上提供了源码。 同样使用最大规模的网">
@@ -405,7 +405,7 @@
 <p>对于roi max pooling，一个输入节点可能和多个输出节点相连。设$x_i$为输入层的节点，$y_{rj}$为第r个候选区域的第j个输出节点。<br><img src="http://img.blog.csdn.net/20160411221426650" alt="这里写图片描述"><br>$$\frac{\partial L}{\partial x_i}=\Sigma_{r,j}\delta(i,r,j)\frac{\partial L}{\partial y_{rj}}$$<br>判决函数$δ(i,r,j)$表示i节点是否被候选区域r的第j个节点选为最大值输出。代价对于xi的梯度等于所有相关的后一层梯度之和。</p>
 <h1 id="网络参数训练"><a href="#网络参数训练" class="headerlink" title="网络参数训练"></a>网络参数训练</h1><h2 id="参数初始化"><a href="#参数初始化" class="headerlink" title="参数初始化"></a>参数初始化</h2><p>网络除去末尾部分如下图，在ImageNet上训练1000类分类器。结果参数作为相应层的初始化参数。<br><img src="http://img.blog.csdn.net/20160411214618571" alt="这里写图片描述"><br>其余参数随机初始化。</p>
 <h2 id="分层数据"><a href="#分层数据" class="headerlink" title="分层数据"></a>分层数据</h2><p>在调优训练时，每一个mini-batch中首先加入N张完整图片，而后加入从N张图片中选取的R个候选框。这R个候选框可以复用N张图片前5个阶段的网络特征。<br>实际选择N=2， R=128。</p>
-<h2 id="训练数据构成"><a href="#训练数据构成" class="headerlink" title="训练数据构成"></a>训练数据构成</h2><p>N张完整图片以50%概率水平翻转。<br>R个候选框的构成方式如下：<br>| 类别 | 比例 | 方式 |<br>| ———— | ———— | ——– |<br>| 正样本 | 25% | 与某个真值重叠在[0.5,1]的候选框 |<br>| 负样本 | 75% | 与真值重叠的最大值在[0.1,0.5)的候选框 | </p>
+<h2 id="训练数据构成"><a href="#训练数据构成" class="headerlink" title="训练数据构成"></a>训练数据构成</h2><p>N张完整图片以50%概率水平翻转。<br>R个候选框的构成方式如下：<br>|  类别  | 比例 | 方式 |<br>| —– | —-| —————————- |<br>| 正样本 | 25% | 与某个真值重叠在[0.5,1]的候选框 |<br>| 负样本 | 75% | 与真值重叠的最大值在[0.1,0.5)的候选框 | </p>
 <h1 id="分类与位置调整"><a href="#分类与位置调整" class="headerlink" title="分类与位置调整"></a>分类与位置调整</h1><h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>第五阶段的特征输入到两个并行的全连层中（称为multi-task）。<br><img src="http://img.blog.csdn.net/20160411154103099" alt="这里写图片描述"><br><strong>cls_score</strong>层用于分类，输出K+1维数组p，表示属于K类和背景的概率。<br><strong>bbox_prdict</strong>层用于调整候选区域位置，输出4*K维数组t，表示分别属于K类时，应该平移缩放的参数。</p>
 <h2 id="代价函数"><a href="#代价函数" class="headerlink" title="代价函数"></a>代价函数</h2><p><strong>loss_cls</strong>层评估分类代价。由真实分类<strong>u</strong>对应的概率决定：<br>$$L_{cls}=-\log p_u$$</p>
 <p><strong>loss_bbox</strong>评估检测框定位代价。比较真实分类对应的预测参数$t^u$和真实平移缩放参数为v的差别：<br>$$L_{loc}=\Sigma_{i=1}^4 g(t^u_i-v_i)$$</p>
